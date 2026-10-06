@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8f1729">
+<title>МГУ • Университетский трекер</title>
+<style>
+:root{
+  --burg:#8f1729;--burg2:#b23a4b;--ink:#26334a;--muted:#748095;
+  --paper:#fbf7f3;--card:rgba(255,255,255,.78);--line:#e7ddd9;
+  --blue:#c9dced;--rose:#efd7d8;--lav:#ddd9ed;--green:#dce9df;
+  --shadow:0 10px 30px rgba(73,42,42,.07);--r:18px;
+}
+*{box-sizing:border-box}body{margin:0;background:
+radial-gradient(circle at 10% 0%,#fff 0,#fbf4f0 34%,#f4eef0 100%);
+color:var(--ink);font-family:Georgia,"Times New Roman",serif;min-height:100vh}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{display:grid;grid-template-columns:235px 1fr;min-height:100vh}
+.sidebar{padding:25px 18px;border-right:1px solid var(--line);background:rgba(250,244,241,.9);position:sticky;top:0;height:100vh}
+.brand{text-align:center;padding:5px 8px 25px}.brand .crest{font-size:42px;color:var(--burg);line-height:1}
+.brand h1{font-size:22px;font-style:italic;font-weight:500;margin:8px 0 3px}.brand p{font-family:Arial,sans-serif;font-size:12px;color:var(--muted);margin:0;line-height:1.45}
+.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#556277;text-align:left;padding:12px 13px;border-radius:12px;display:flex;gap:11px;align-items:center}.nav button:hover,.nav button.active{background:#ecd8d9;color:var(--burg)}.nav .ico{width:22px;text-align:center;font-size:17px}
+.side-bottom{position:absolute;bottom:22px;left:18px;right:18px;font-family:Arial,sans-serif;font-size:11px;color:#9a8d8c;text-align:center}
+.main{min-width:0}.top{padding:32px 40px 24px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(255,255,255,.35),rgba(226,216,224,.55))}
+.top h2{font-size:32px;font-weight:500;margin:0 0 5px}.top p{margin:0;color:#667185;font-size:17px}.datepill{background:#fff;border:1px solid var(--line);padding:11px 15px;border-radius:24px;box-shadow:var(--shadow);font-size:14px}
+.content{padding:25px 30px 45px;max-width:1450px;margin:auto}.view{display:none}.view.active{display:block}
+.grid{display:grid;gap:18px}.stats{grid-template-columns:repeat(4,1fr)}.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}.stat{padding:19px}.stat small{font-family:Arial,sans-serif;color:var(--muted)}.stat strong{display:block;font-size:28px;margin:7px 0}.stat span{font-family:Arial,sans-serif;font-size:12px;color:#8a7180}
+.two{grid-template-columns:1.45fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.card{padding:20px}.card h3{margin:0 0 15px;font-size:19px;font-weight:500}.muted{color:var(--muted);font-family:Arial,sans-serif;font-size:13px}
+.task{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #eee6e2}.task:last-child{border-bottom:0}.task input{accent-color:var(--burg)}.task.done span{text-decoration:line-through;color:#a0a0a0}.task .time{margin-left:auto;color:#87909e;font:12px Arial}
+.btn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 13px;color:var(--ink)}.btn.primary{background:var(--burg);color:white;border-color:var(--burg)}.btn.soft{background:#f0dcdc;color:var(--burg)}.btn.danger{color:#a33;border-color:#e8caca}.actions{display:flex;gap:8px;flex-wrap:wrap}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.section-head h3{margin:0}
+table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:13px}th,td{padding:10px 8px;border-bottom:1px solid #ece5e1;text-align:left}th{color:#788194;font-weight:600}.badge{display:inline-block;padding:4px 8px;border-radius:10px;background:#eee;font-size:11px}.b-green{background:var(--green)}.b-rose{background:var(--rose)}.b-blue{background:var(--blue)}.b-red{background:#f1d2d2;color:#8c2a35}
+.progress{height:8px;background:#e9e5e6;border-radius:20px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#a9c8e4,#b58da0);border-radius:20px}
+.calendar{font-family:Arial,sans-serif}.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.cal-head strong{font-family:Georgia;font-size:17px}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.dow{text-align:center;color:#9095a0;font-size:10px;padding:5px}.day{min-height:70px;background:#fff;border:1px solid #eee6e2;border-radius:10px;padding:7px;position:relative}.day.mutedday{background:#f8f5f4;color:#b4afb0}.daynum{font-size:12px}.day.today{outline:2px solid #c98c98}.day .dot{width:5px;height:5px;background:var(--burg);border-radius:50%;display:inline-block;margin:2px}.eventline{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#68748a;margin-top:5px}
+.schedule-wrap{overflow:auto}.schedule-grid{display:grid;grid-template-columns:95px repeat(6,minmax(145px,1fr));min-width:960px}.schedule-grid>div{border-right:1px solid #eee4e0;border-bottom:1px solid #eee4e0;padding:10px}.sched-head{background:#f4e8e6;text-align:center;font-weight:600}.timecell{color:#8991a0;font:11px Arial;background:#faf7f6}.lesson{border-radius:12px;padding:9px;background:#eef4f8;border-left:4px solid #9cbad4;min-height:75px}.lesson b{font-size:12px}.lesson small{display:block;font:10px Arial;color:#69768a;margin-top:5px}.lesson button{border:0;background:transparent;font:10px Arial;color:#7b5360;padding:3px 0}.lesson.absent{background:#f7e3e2;border-left-color:#bd6972}.lesson.present{background:#e4eee6;border-left-color:#7ba78a}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 11px;outline:none}.toolbar input{min-width:210px}
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.lane{background:rgba(248,244,242,.85);border:1px solid var(--line);border-radius:16px;padding:12px;min-height:430px}.lane h4{margin:4px 4px 12px;font-size:16px}.dropzone{min-height:370px}.kcard{background:white;border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:10px;box-shadow:0 5px 14px rgba(60,40,40,.05);cursor:grab}.kcard b{display:block;margin-bottom:5px}.kmeta{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.tag{font:10px Arial;padding:4px 7px;border-radius:9px;background:#eee}.months{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:10px}.month{font:9px Arial;text-align:center;padding:5px 1px;border-radius:5px;background:#eee}.month.on{background:#e7cacc;color:#713b46}.month.future{background:#f0edf0}.timeline{overflow:auto}.timeline-row{display:grid;grid-template-columns:190px 1fr;min-width:850px;border-bottom:1px solid #eee5e2;padding:11px 0}.timeline-label{font-size:13px;padding-right:10px}.monthline{display:grid;grid-template-columns:repeat(12,1fr);gap:2px}.bar{height:25px;background:#e8d1d2;border-radius:7px;grid-row:1;align-self:center}.bar.blue{background:#d4e1ef}.bar.green{background:#dce9df}.bar.lav{background:#ded9ed}
+.notice{padding:13px 15px;border-radius:12px;background:#f5ebe9;font-size:13px;margin-bottom:15px}.empty{padding:28px;text-align:center;color:#9398a2;font:13px Arial}
+.modal{position:fixed;inset:0;background:rgba(35,25,30,.35);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.open{display:flex}.modalbox{background:#fffaf8;border:1px solid var(--line);border-radius:20px;width:min(560px,100%);padding:23px;box-shadow:0 30px 70px rgba(30,20,20,.2)}.modalbox h3{margin:0 0 18px;font-weight:500}.fields{display:grid;gap:12px}.field label{display:block;font:11px Arial;color:#6d7685;margin:0 0 5px}.field textarea{min-height:80px;resize:vertical}.modalfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.mobilebar{display:none}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;background:#fffaf8;border-top:1px solid var(--line);justify-content:space-around;padding:7px 3px}.mobilebar button{border:0;background:none;font-size:9px;color:#697487}.mobilebar button span{display:block;font-size:17px}.top{padding:22px 18px}.top h2{font-size:25px}.content{padding:18px 14px 75px}.stats{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.kanban{grid-template-columns:1fr}.lane{min-height:260px}.dropzone{min-height:170px}.months{grid-template-columns:repeat(12,34px);overflow:auto}}
+@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.stat strong{font-size:22px}.datepill{font-size:11px;padding:8px}.top p{font-size:13px}}
+
+/* ===== MSU / OLD MONEY ACADEMIC THEME ===== */
+:root{
+  --burg:#6f4b43;
+  --burg2:#8c665c;
+  --ink:#3d352f;
+  --muted:#8a8178;
+  --paper:#f5efe5;
+  --card:rgba(250,246,238,.86);
+  --line:#d8cbbd;
+  --blue:#d9e0df;
+  --rose:#eadbd2;
+  --lav:#dfd9d1;
+  --green:#dfe4d9;
+  --shadow:0 8px 25px rgba(79,59,46,.055);
+  --r:13px;
+}
+body{
+  background:
+    radial-gradient(circle at 80% 8%,rgba(255,255,255,.75),transparent 28%),
+    radial-gradient(circle at 10% 90%,rgba(215,196,176,.16),transparent 26%),
+    #f4eee4;
+  color:var(--ink);
+  letter-spacing:.01em;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.18;
+  background-image:
+    linear-gradient(rgba(105,82,65,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(105,82,65,.025) 1px,transparent 1px);
+  background-size:28px 28px;
+  z-index:0;
+}
+.app{position:relative;z-index:1;grid-template-columns:235px 1fr}
+.sidebar{
+  background:rgba(242,234,222,.92);
+  border-right:1px solid #d4c5b5;
+  box-shadow:8px 0 30px rgba(72,52,40,.035);
+}
+.brand{padding:12px 8px 27px}
+.brand-crest{
+  width:126px;height:126px;object-fit:cover;
+  display:block;margin:0 auto 10px;
+  mix-blend-mode:multiply;
+}
+.brand h1{
+  color:#51443b;
+  font-size:21px;
+  line-height:1.15;
+  letter-spacing:.02em;
+}
+.brand p{color:#918378}
+.nav{gap:4px}
+.nav button{
+  color:#665b53;
+  border:1px solid transparent;
+  font-family:Georgia,"Times New Roman",serif;
+  letter-spacing:.02em;
+}
+.nav button:hover,.nav button.active{
+  background:#e5d9cc;
+  border-color:#d7c8b8;
+  color:#65473f;
+}
+.nav .ico{color:#74574e}
+.side-bottom{
+  color:#9b8d80;
+  line-height:1.6;
+}
+.top{
+  position:relative;
+  min-height:180px;
+  padding:38px 48px 30px;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(246,240,230,.97) 0%,rgba(246,240,230,.88) 45%,rgba(226,217,204,.62) 100%);
+  border-bottom:1px solid #d9cbbd;
+}
+.top:after{
+  content:"";
+  position:absolute;
+  right:25px;bottom:-65px;
+  width:410px;height:190px;
+  opacity:.15;
+  background:
+    linear-gradient(90deg,transparent 0 20%,#76584d 20% 21%,transparent 21% 30%,#76584d 30% 31%,transparent 31% 69%,#76584d 69% 70%,transparent 70% 79%,#76584d 79% 80%,transparent 80%),
+    linear-gradient(#76584d,#76584d) center 28px/20px 115px no-repeat;
+  clip-path:polygon(8% 100%,8% 52%,19% 52%,19% 38%,31% 38%,31% 18%,43% 18%,50% 0,57% 18%,69% 18%,69% 38%,81% 38%,81% 52%,92% 52%,92% 100%);
+}
+.top h2{color:#463a34;font-size:35px;letter-spacing:.01em}
+.top p{color:#80766c;font-style:italic}
+.datepill{
+  position:relative;z-index:2;
+  background:rgba(255,252,247,.82);
+  border:1px solid #d9cbbd;
+  color:#594b43;
+  box-shadow:0 5px 18px rgba(70,48,38,.06);
+}
+.content{max-width:1500px;padding:22px 30px 48px}
+.stat,.card{
+  background:rgba(250,246,239,.83);
+  border:1px solid #d8cbbd;
+  border-radius:13px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(5px);
+}
+.stat{padding:18px 19px}
+.stat small,.muted{color:#91867b}
+.stat strong{color:#58453d;font-weight:500}
+.stat span{color:#9a8176}
+.card h3{color:#4e4039}
+.btn{
+  background:#fbf7f0;
+  border-color:#d5c7b8;
+  color:#635149;
+}
+.btn:hover{background:#eee4d8}
+.btn.primary{
+  background:#705048;
+  border-color:#705048;
+  color:#fffaf4;
+}
+.btn.soft{
+  background:#eadcd2;
+  border-color:#d9c8ba;
+  color:#6c4d45;
+}
+.btn.danger{color:#8c4e49;border-color:#ddc2b9}
+.task{border-color:#e7ded5}
+.task input{accent-color:#73534a}
+.progress{background:#e4ddd5}
+.progress i{background:linear-gradient(90deg,#866259,#b39783)}
+.badge{background:#e8e0d7;color:#66574e}
+.b-green{background:#dfe5dc;color:#53614e}
+.b-rose{background:#eadbd3;color:#76544b}
+.b-blue{background:#dce3e2;color:#526461}
+.b-red{background:#ead5d1;color:#874b47}
+.notice{background:#eee3d8;border-color:#ddd0c1;color:#6b5a50}
+.schedule-grid>div{border-color:#e4dbd2}
+.sched-head{background:#e8ddd1;color:#66554c}
+.timecell{background:#f8f3ec;color:#988c80}
+.lesson{background:#e4e8e5;border-left-color:#8c9b92}
+.lesson.absent{background:#eedbd6;border-left-color:#9e655c}
+.lesson.cancelled{background:#eee9e1;border-left-color:#b2a69a;color:#8d8379;opacity:.88}
+.lesson.cancelled button{color:#806f65}
+.lesson.present{background:#e0e7df;border-left-color:#758a7c}
+.lesson button{color:#76564e}
+.calendar .day{background:#fbf7f0;border-color:#e5dbd2}
+.calendar .day.mutedday{background:#f4eee6;color:#b1a69b}
+.day.today{outline:2px solid #a47c70}
+.day .dot{background:#76544a}
+.cal-head strong{color:#564840}
+.toolbar input,.toolbar select,.field input,.field select,.field textarea{
+  background:#fcf8f2;border-color:#d7cabd;color:#564941;
+}
+.lane{background:rgba(239,232,222,.76);border-color:#d9ccbe}
+.kcard{background:#fbf7f0;border-color:#d9cbbd;box-shadow:0 4px 13px rgba(65,45,35,.045)}
+.tag{background:#e9e0d6;color:#6c5a51}
+.month{background:#e9e2da;color:#897b70}
+.month.on{background:#d9c2b7;color:#66483f}
+.month.future{background:#f0ebe4}
+.bar{background:#d7bdb4}.bar.blue{background:#cbd8d9}.bar.green{background:#d4dfd0}.bar.lav{background:#d9d2ce}
+.modal{background:rgba(52,40,33,.35)}
+.modalbox{background:#faf5ed;border-color:#d7c9ba}
+.modalbox h3{color:#4f4038}
+.empty{color:#9a8e82}
+.mobilebar{background:#f8f1e8;border-color:#d6c8b9}
+.mobilebar button{color:#6e5d54}
+@media(max-width:900px){
+  .top{min-height:150px;padding:24px 18px}
+  .top:after{right:-80px;opacity:.1}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img class="brand-crest" src="icon.png" alt="MSU crest"><h1>Университетский<br>трекер</h1><p>учёба · проекты · стажировки<br>в одном месте</p></div>
+  <nav class="nav">
+    <button data-view="home" class="active"><span class="ico">⌂</span> Главная</button>
+    <button data-view="schedule"><span class="ico">▦</span> Расписание</button>
+    <button data-view="tasks"><span class="ico">✓</span> Задания</button>
+    <button data-view="subjects"><span class="ico">◫</span> Предметы</button>
+    <button data-view="calendar"><span class="ico">□</span> Мероприятия</button>
+    <button data-view="kanban"><span class="ico">▤</span> Стажировки и проекты</button>
+  </nav>
+  <div class="side-bottom">MSU · personal academic tracker<br>данные хранятся в этом браузере</div>
+</aside>
+
+<main class="main">
+<header class="top"><div><h2>Привет, Лиза! ♡</h2><p id="subtitle">Сегодня — ещё один шаг к твоим университетским целям ✦</p></div><div class="datepill" id="datePill"></div></header>
+<div class="content">
+
+<section id="home" class="view active">
+  <div class="grid stats">
+    <div class="stat"><small>Заданий до дедлайна</small><strong id="sTasks">0</strong><span id="sSoon">—</span></div>
+    <div class="stat"><small>Посещаемость</small><strong id="sAttend">—</strong><span>по отмеченным занятиям</span></div>
+    <div class="stat"><small>Активных проектов</small><strong id="sProjects">0</strong><span>стажировки + проекты</span></div>
+    <div class="stat"><small>Мероприятий</small><strong id="sEvents">0</strong><span>ближайшие события</span></div>
+  </div>
+  <div style="height:18px"></div>
+  <div class="grid two">
+    <div class="card"><div class="section-head"><h3>Ближайшие задания</h3><button class="btn soft" onclick="openModal('task')">+ Добавить</button></div><div id="homeTasks"></div></div>
+    <div class="card"><div class="section-head"><h3>Ближайшие мероприятия</h3><button class="btn soft" onclick="openModal('event')">+ Добавить</button></div><div id="homeEvents"></div></div>
+  </div>
+  <div style="height:18px"></div>
+  <div class="card"><div class="section-head"><h3>Мой семестр</h3><button class="btn" onclick="showView('schedule')">Открыть посещаемость →</button></div><div id="homeCourses"></div></div>
+</section>
+
+<section id="schedule" class="view">
+  <div class="section-head"><div><h3>Расписание и посещаемость</h3><div class="muted">Нажми «присутствовала / пропуск» у занятия. Статистика сохраняется автоматически.</div></div><button class="btn primary" onclick="openModal('lesson')">+ Занятие</button></div>
+  <div class="card" style="margin-bottom:18px"><div class="toolbar"><button class="btn" onclick="changeWeek(-1)">← Пред.</button><button class="btn" onclick="goCurrentWeek()">Сегодня</button><button class="btn" onclick="changeWeek(1)">След. →</button><span class="badge b-blue" id="weekLabel"></span></div><div class="schedule-wrap"><div class="schedule-grid" id="scheduleGrid"></div></div></div>
+  <div class="grid two"><div class="card"><h3>Посещаемость по предметам</h3><div id="attendanceCourses"></div></div><div class="card"><h3>Настройки семестра</h3><div class="fields">
+    <div class="field"><label>Начало семестра</label><input type="date" id="semStart"></div>
+    <div class="field"><label>Конец семестра</label><input type="date" id="semEnd"></div>
+    <button class="btn primary" onclick="saveSemester()">Сохранить даты семестра</button>
+  </div></div></div>
+</section>
+
+<section id="tasks" class="view">
+  <div class="section-head"><div><h3>Задания</h3><div class="muted">Дедлайны, статусы и приоритеты.</div></div><button class="btn primary" onclick="openModal('task')">+ Новое задание</button></div>
+  <div class="toolbar"><input id="taskSearch" placeholder="Поиск по заданиям…" oninput="renderTasks()"><select id="taskFilter" onchange="renderTasks()"><option value="all">Все</option><option value="active">В работе</option><option value="done">Выполненные</option><option value="overdue">Просроченные</option></select></div>
+  <div class="card"><div id="tasksTable"></div></div>
+</section>
+
+
+<section id="subjects" class="view">
+  <div class="section-head">
+    <div><h3>Учебные предметы</h3><div class="muted">Добавляй реальные предметы своего семестра — они появятся в заданиях и расписании.</div></div>
+    <button class="btn primary" onclick="openModal('subject')">+ Новый предмет</button>
+  </div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="notice">Для каждого предмета можно указать преподавателя, формат и аудиторию. При добавлении задания или пары предмет выбирается из списка.</div>
+    <div id="subjectsList"></div>
+  </div>
+</section>
+
+<section id="calendar" class="view">
+  <div class="section-head"><div><h3>Календарь мероприятий</h3><div class="muted">Конференции, школы, встречи, пары и другие события.</div></div><button class="btn primary" onclick="openModal('event')">+ Мероприятие</button></div>
+  <div class="card calendar"><div class="cal-head"><button class="btn" onclick="changeMonth(-1)">←</button><strong id="calTitle"></strong><button class="btn" onclick="changeMonth(1)">→</button></div><div class="week" id="calendarGrid"></div></div>
+  <div class="card" style="margin-top:18px"><div class="section-head"><h3>Все мероприятия</h3><button class="btn soft" onclick="openModal('event')">+ Добавить</button></div><div id="eventsManager"></div></div>
+</section>
+
+<section id="kanban" class="view">
+  <div class="section-head"><div><h3>Стажировки и проекты</h3><div class="muted">Перетаскивай карточки между статусами и отмечай месяцы, в которых занималась проектом.</div></div><button class="btn primary" onclick="openModal('project')">+ Проект / стажировка</button></div>
+  <div class="kanban" id="kanbanBoard"></div>
+  <div style="height:18px"></div>
+  <div class="card"><div class="section-head"><h3>Моя активность по месяцам</h3><span class="muted">2026–2027</span></div><div class="timeline" id="timeline"></div></div>
+</section>
+
+</div></main>
+</div>
+
+<div class="mobilebar">
+<button onclick="showView('home')"><span>⌂</span>Главная</button>
+<button onclick="showView('schedule')"><span>▦</span>Расписание</button>
+<button onclick="showView('tasks')"><span>✓</span>Задания</button>
+<button onclick="showView('subjects')"><span>◫</span>Предметы</button>
+<button onclick="showView('calendar')"><span>□</span>События</button>
+<button onclick="showView('kanban')"><span>▤</span>Проекты</button>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><h3 id="modalTitle">Добавить</h3><div id="modalBody"></div><div class="modalfoot"><button class="btn" onclick="closeModal()">Отмена</button><button class="btn primary" id="modalSave">Сохранить</button></div></div></div>
+
+<script>
+const KEY='msu_university_tracker_v1';
+const days=['Пн','Вт','Ср','Чт','Пт','Сб'];
+const months=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
+ semester:{start:'2026-09-01',end:'2027-01-31'},
+ lessons:[
+  {id:'l1',course:'Международные отношения',teacher:'Семинар',day:0,time:'10:00',room:'ауд. 412'},
+  {id:'l2',course:'Конфликтология',teacher:'Лекция',day:1,time:'12:10',room:'ауд. 318'},
+  {id:'l3',course:'Английский язык',teacher:'Практика',day:2,time:'10:00',room:'ауд. 205'},
+  {id:'l4',course:'Мировая политика',teacher:'Семинар',day:3,time:'14:00',room:'ауд. 507'},
+  {id:'l5',course:'Исследовательский семинар',teacher:'Практика',day:4,time:'12:10',room:'ауд. 601'}
+ ],
+ attendance:{},
+  cancelled:{},
+ tasks:[
+  {id:'t1',title:'Подготовить тезисы конференции',course:'Исследовательский семинар',due:'2026-10-12',priority:'Высокий',done:false},
+  {id:'t2',title:'Прочитать статью к семинару',course:'Мировая политика',due:'2026-10-09',priority:'Средний',done:false},
+  {id:'t3',title:'Сдать эссе по конфликтологии',course:'Конфликтология',due:'2026-10-18',priority:'Высокий',done:false}
+ ],
+ events:[
+  {id:'e1',title:'Научная конференция',date:'2026-10-15',time:'11:00',place:'Главный корпус',type:'Конференция'},
+  {id:'e2',title:'Встреча с куратором',date:'2026-10-09',time:'16:00',place:'Онлайн',type:'Учёба'}
+ ],
+ projects:[
+  {id:'p1',title:'Парламентская стажировка',kind:'Стажировка',status:'doing',months:['2026-02','2026-03','2026-04','2026-05','2026-06'],color:'blue',note:'Аналитическая и проектная работа'},
+  {id:'p2',title:'Магистерская диссертация',kind:'Проект',status:'doing',months:['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11'],color:'rose',note:'Исследование и написание глав'},
+  {id:'p3',title:'Мова мiру',kind:'Проект',status:'todo',months:['2026-08','2026-09','2026-10','2026-11','2026-12'],color:'green',note:'Организация языкового клуба'}
+ ]};
+let weekOffset=0, calDate=new Date(), modalAction=null;
+
+if(!db.cancelled || typeof db.cancelled!=='object') db.cancelled={};
+if(!Array.isArray(db.subjects)){
+  const names=[...new Set(db.lessons.map(l=>l.course).concat(db.tasks.map(t=>t.course)).filter(Boolean))];
+  db.subjects=names.map((name,i)=>({id:uid('s'),name,teacher:'',format:'',room:'',color:['rose','blue','green','lav'][i%4]}));
+  localStorage.setItem(KEY,JSON.stringify(db));
+}
+
+function getSubjectNames(){
+  return [...db.subjects].sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+}
+function subjectByName(name){ return db.subjects.find(s=>s.name===name); }
+function subjectOptions(selected=''){
+  return '<option value="">— выбрать предмет —</option>'+getSubjectNames().map(s=>`<option value="${esc(s.name)}" ${s.name===selected?'selected':''}>${esc(s.name)}</option>`).join('');
+}
+
+function save(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function fmt(d){return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}
+function iso(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
+function parseDate(s){return new Date(s+'T12:00:00')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(v).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+document.getElementById('datePill').textContent='▣ '+fmt(new Date());
+
+function renderSubjects(){
+  const list=document.getElementById('subjectsList'); if(!list)return;
+  const subjects=getSubjectNames();
+  list.innerHTML=subjects.length?subjects.map(s=>{
+    const lessons=db.lessons.filter(l=>l.course===s.name).length;
+    const tasks=db.tasks.filter(t=>t.course===s.name).length;
+    const a=attendanceForSubject(s.name);
+    return `<div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid #eee6e2">
+      <div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b style="font-size:16px">${esc(s.name)}</b><span class="badge ${s.color==='blue'?'b-blue':s.color==='green'?'b-green':s.color==='lav'?'b-blue':'b-rose'}">${esc(s.format||'предмет')}</span></div>
+      <div class="muted" style="margin-top:5px">${esc(s.teacher||'Преподаватель не указан')} · ${esc(s.room||'аудитория не указана')} · ${lessons} занятий в расписании · ${tasks} заданий · отменено: ${a.cancelled} · посещаемость: ${a.marked?a.pct+'%':'нет данных'}</div></div>
+      <div class="actions"><button class="btn" onclick="openModal('subject','${s.id}')">Изменить</button><button class="btn danger" onclick="deleteSubject('${s.id}')">Удалить</button></div>
+    </div>`;
+  }).join(''):'<div class="empty">Пока нет предметов. Добавь первый предмет своего семестра.</div>';
+  const homeCourses=document.getElementById('homeCourses');
+  if(homeCourses)homeCourses.innerHTML=subjects.length?subjects.map(s=>{const a=attendanceForSubject(s.name);return `<div style="margin:13px 0"><div style="display:flex;justify-content:space-between"><span>${esc(s.name)}</span><span class="muted">${a.marked?a.pct+'%':'нет отметок'}</span></div><div class="progress"><i style="width:${a.pct}%"></i></div></div>`}).join(''):'<div class="empty">Добавь предметы — здесь появится статистика семестра.</div>';
+}
+function deleteSubject(id){
+  const s=db.subjects.find(x=>x.id===id); if(!s)return;
+  const lessonIds=db.lessons.filter(l=>l.course===s.name).map(l=>l.id);
+  const taskCount=db.tasks.filter(t=>t.course===s.name).length;
+  const msg=`Удалить предмет «${s.name}»?\n\nБудут удалены ${lessonIds.length} связанных занятий и их отметки посещаемости.${taskCount?` Задания (${taskCount}) останутся, чтобы не потерять дедлайны.`:''}`;
+  if(!confirm(msg))return;
+  db.lessons=db.lessons.filter(l=>l.course!==s.name);
+  Object.keys(db.attendance).forEach(k=>{if(lessonIds.some(id=>k.startsWith(id+'|')))delete db.attendance[k]});
+  db.subjects=db.subjects.filter(x=>x.id!==id);
+  save();
+}
+
+function semesterDates(){
+  return {start:parseDate(db.semester.start),end:parseDate(db.semester.end)};
+}
+function dateInSemester(d){
+  const {start,end}=semesterDates();
+  return d>=start && d<=end;
+}
+function datesForLesson(lesson){
+  const out=[], {start,end}=semesterDates();
+  const d=new Date(start); d.setHours(12,0,0,0);
+  const target=Number(lesson.day);
+  d.setDate(d.getDate()+((target-(d.getDay()+6)%7+7)%7));
+  while(d<=end){ out.push(new Date(d)); d.setDate(d.getDate()+7); }
+  return out;
+}
+function occurrenceKey(lessonId,date){return lessonId+'|'+date}
+function isCancelled(lessonId,date){return !!db.cancelled[occurrenceKey(lessonId,date)]}
+function toggleLessonOccurrence(lessonId,date){
+  if(!dateInSemester(parseDate(date))) return alert('Эта дата находится вне выбранного семестра.');
+  const key=occurrenceKey(lessonId,date);
+  if(db.cancelled[key]){
+    delete db.cancelled[key];
+  }else{
+    db.cancelled[key]=true;
+    delete db.attendance[key];
+  }
+  save();
+}
+function attendanceForSubject(name){
+  const lessons=db.lessons.filter(l=>l.course===name);
+  let scheduled=0,marked=0,present=0,absent=0,cancelled=0;
+  lessons.forEach(l=>datesForLesson(l).forEach(d=>{
+    const ds=iso(d);
+    if(isCancelled(l.id,ds)){cancelled++;return;}
+    if(d>new Date()) return;
+    scheduled++;
+    const st=db.attendance[occurrenceKey(l.id,ds)];
+    if(st==='present'){marked++;present++}
+    if(st==='absent'){marked++;absent++}
+  }));
+  return {scheduled,marked,present,absent,cancelled,pct:marked?Math.round(present/marked*100):0};
+}
+function renderHome(){
+ const today=iso(new Date());
+ const active=db.tasks.filter(t=>!t.done);
+ document.getElementById('sTasks').textContent=active.length;
+ document.getElementById('sSoon').textContent=active.filter(t=>t.due<=iso(new Date(Date.now()+7*864e5))).length+' в ближайшие 7 дней';
+ document.getElementById('sProjects').textContent=db.projects.filter(p=>p.status!=='done').length;
+ document.getElementById('sEvents').textContent=db.events.filter(e=>e.date>=today).length;
+ const stats=db.subjects.reduce((a,s)=>{const x=attendanceForSubject(s.name);a.marked+=x.marked;a.present+=x.present;return a},{marked:0,present:0});
+ document.getElementById('sAttend').textContent=stats.marked?Math.round(stats.present/stats.marked*100)+'%':'—';
+ const sorted=[...active].sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);
+ document.getElementById('homeTasks').innerHTML=sorted.length?sorted.map(t=>`<div class="task"><span>${esc(t.title)}<br><span class="muted">${esc(t.course)}</span></span><span class="time">${fmt(parseDate(t.due))}</span><button class="btn" onclick="openModal('task','${t.id}')">Изменить</button></div>`).join(''):'<div class="empty">Нет активных заданий ♡</div>';
+ const ev=[...db.events].filter(e=>e.date>=today).sort((a,b)=>(a.date+b.time).localeCompare(b.date+a.time)).slice(0,4);
+ document.getElementById('homeEvents').innerHTML=ev.length?ev.map(e=>`<div class="task"><span><b>${esc(e.title)}</b><br><span class="muted">${esc(e.type)} · ${esc(e.place)}</span></span><span class="time">${fmt(parseDate(e.date))}<br>${esc(e.time||'')}</span><div class="actions"><button class="btn" onclick="openModal('event','${e.id}')">Изменить</button><button class="btn danger" onclick="deleteItem('event','${e.id}')">Удалить</button></div></div>`).join(''):'<div class="empty">Ближайших мероприятий нет</div>';
+ const courses=getSubjectNames();
+ document.getElementById('homeCourses').innerHTML=courses.length?courses.map(c=>{const x=attendanceForSubject(c.name);return `<div style="margin:13px 0"><div style="display:flex;justify-content:space-between"><span>${esc(c.name)}</span><span class="muted">${x.marked?x.pct+'%':'нет отметок'}</span></div><div class="progress"><i style="width:${x.pct}%"></i></div><div class="muted" style="margin-top:4px">Отмечено: ${x.marked} · присутствий: ${x.present} · пропусков: ${x.absent}</div></div>`}).join(''):'<div class="empty">Добавь предметы — здесь появится статистика семестра.</div>';
+}
+function weekStart(){let d=new Date();let day=(d.getDay()+6)%7;d.setDate(d.getDate()-day+weekOffset*7);d.setHours(12,0,0,0);return d}
+function renderSchedule(){
+ const start=weekStart();let end=new Date(start);end.setDate(end.getDate()+5);
+ document.getElementById('weekLabel').textContent=fmt(start)+' — '+fmt(end);
+ let h='<div class="sched-head">Время</div>'+days.map((x,i)=>{let d=new Date(start);d.setDate(d.getDate()+i);return `<div class="sched-head">${x}<br>${d.getDate()}.${String(d.getMonth()+1).padStart(2,'0')}</div>`}).join('');
+ const times=[...new Set(db.lessons.map(l=>String(l.time||'').slice(0,5)).filter(Boolean))].sort();
+ if(!times.length){
+   h+='<div class="empty" style="grid-column:1/-1">Пока нет занятий. Добавь первое занятие в расписание.</div>';
+ } else {
+   times.forEach(time=>{
+     h+=`<div class="timecell">${esc(time)}</div>`;
+     for(let di=0;di<6;di++){
+       let d=new Date(start);d.setDate(d.getDate()+di);
+       let ds=iso(d);
+       let ls=db.lessons.filter(l=>l.day===di&&String(l.time||'').slice(0,5)===time);
+       h+=`<div>${ls.map(l=>{let key=l.id+'|'+ds,st=db.attendance[key],cancelled=isCancelled(l.id,ds);return `<div class="lesson ${cancelled?'cancelled':st||''}"><b>${esc(l.course)}</b><small>${esc(l.teacher||'')} ${l.room?'· '+esc(l.room):''}</small>${cancelled?`<div style="margin-top:7px;font-weight:600">— занятие не проводилось</div><button onclick="toggleLessonOccurrence('${l.id}','${ds}')">↶ вернуть занятие</button>`:`<button onclick="toggleAttendance('${l.id}','${ds}')">${st==='present'?'✓ присутствовала':st==='absent'?'× пропуск':'○ отметить присутствие'}</button>${st?`<button onclick="clearAttendance('${l.id}','${ds}')">сбросить</button>`:''}<button onclick="toggleLessonOccurrence('${l.id}','${ds}')">не проводилась в этот день</button>`}<div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap"><button onclick="openModal('lesson','${l.id}')">изменить всё расписание</button><button onclick="deleteItem('lesson','${l.id}')">удалить занятие</button></div></div>`}).join('')}</div>`;
+     }
+   });
+ }
+ document.getElementById('scheduleGrid').innerHTML=h;
+ const courses=getSubjectNames();
+ document.getElementById('attendanceCourses').innerHTML=courses.length?courses.map(s=>{let x=attendanceForSubject(s.name);return `<div style="padding:10px 0;border-bottom:1px solid #eee"><div style="display:flex;justify-content:space-between"><b>${esc(s.name)}</b><span class="muted">${x.present} / ${x.marked} присутствий</span></div><div class="progress" style="margin:7px 0"><i style="width:${x.pct}%"></i></div><span class="muted">Занятий прошло: ${x.scheduled} · Отменено: ${x.cancelled} · Пропуски: ${x.absent} · Посещаемость: ${x.marked?x.pct+'%':'нет данных'}</span></div>`}).join(''):'<div class="empty">Сначала добавь учебные предметы.</div>';
+ document.getElementById('semStart').value=db.semester.start;document.getElementById('semEnd').value=db.semester.end;
+}
+function toggleAttendance(id,date){if(!dateInSemester(parseDate(date)))return alert('Эта дата находится вне выбранного семестра.');const key=id+'|'+date;db.attendance[key]=db.attendance[key]==='present'?'absent':'present';save()}
+function clearAttendance(id,date){delete db.attendance[id+'|'+date];save()}
+function changeWeek(n){weekOffset+=n;renderSchedule()}function goCurrentWeek(){weekOffset=0;renderSchedule()}
+function saveSemester(){if(!document.getElementById('semStart').value||!document.getElementById('semEnd').value)return alert('Укажи обе даты семестра.');if(document.getElementById('semStart').value>document.getElementById('semEnd').value)return alert('Начало семестра не может быть позже конца.');db.semester.start=document.getElementById('semStart').value;db.semester.end=document.getElementById('semEnd').value;save();alert('Даты семестра сохранены.')}
+function renderTasks(){
+ let q=(document.getElementById('taskSearch').value||'').toLowerCase(),f=document.getElementById('taskFilter').value,today=iso(new Date());
+ let arr=db.tasks.filter(t=>t.title.toLowerCase().includes(q)||t.course.toLowerCase().includes(q)).filter(t=>f==='all'||f==='active'&&!t.done||f==='done'&&t.done||f==='overdue'&&!t.done&&t.due<today).sort((a,b)=>a.due.localeCompare(b.due));
+ document.getElementById('tasksTable').innerHTML=arr.length?`<table><thead><tr><th>Задание</th><th>Предмет</th><th>Дедлайн</th><th>Приоритет</th><th>Статус</th><th></th></tr></thead><tbody>${arr.map(t=>`<tr><td><b>${esc(t.title)}</b></td><td>${esc(t.course)}</td><td>${fmt(parseDate(t.due))}</td><td><span class="badge ${t.priority==='Высокий'?'b-red':t.priority==='Средний'?'b-rose':'b-green'}">${esc(t.priority)}</span></td><td><button class="btn" onclick="toggleTask('${t.id}')">${t.done?'✓ выполнено':'○ в работе'}</button></td><td><button class="btn danger" onclick="deleteItem('task','${t.id}')">Удалить</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Ничего не найдено</div>';
+}
+function toggleTask(id){let t=db.tasks.find(x=>x.id===id);t.done=!t.done;save()} 
+function renderCalendar(){
+ let y=calDate.getFullYear(),m=calDate.getMonth();document.getElementById('calTitle').textContent=calDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+ let first=new Date(y,m,1),start=(first.getDay()+6)%7,daysIn=new Date(y,m+1,0).getDate(),h=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(x=>`<div class="dow">${x}</div>`).join('');
+ for(let i=0;i<42;i++){let n=i-start+1,d=new Date(y,m,n),actual=n>=1&&n<=daysIn,ds=iso(d),ev=db.events.filter(e=>e.date===ds);h+=`<div class="day ${actual?'':'mutedday'} ${ds===iso(new Date())?'today':''}"><div class="daynum">${d.getDate()}</div>${ev.map(e=>`<div class="eventline" title="${esc(e.title)}"><span class="dot"></span>${esc(e.title)}</div>`).join('')}</div>`}
+ document.getElementById('calendarGrid').innerHTML=h;
+}
+function renderEventsManager(){
+ const box=document.getElementById('eventsManager'); if(!box)return;
+ const arr=[...db.events].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ box.innerHTML=arr.length?arr.map(e=>`<div class="task"><span><b>${esc(e.title)}</b><br><span class="muted">${fmt(parseDate(e.date))} · ${esc(e.time||'')} · ${esc(e.type||'Мероприятие')} · ${esc(e.place||'')}</span></span><div class="actions"><button class="btn" onclick="openModal('event','${e.id}')">Изменить</button><button class="btn danger" onclick="deleteItem('event','${e.id}')">Удалить</button></div></div>`).join(''):'<div class="empty">Мероприятий пока нет.</div>';
+}
+function changeMonth(n){calDate.setMonth(calDate.getMonth()+n);renderCalendar()}
+function renderKanban(){
+ const lanes=[['todo','Запланировано'],['doing','В работе'],['done','Завершено']];let board='';
+ lanes.forEach(([status,title])=>{let ps=db.projects.filter(p=>p.status===status);board+=`<div class="lane" data-status="${status}" ondragover="event.preventDefault()" ondrop="dropProject(event,'${status}')"><h4>${title} <span class="muted">${ps.length}</span></h4><div class="dropzone">${ps.map(p=>`<div class="kcard" draggable="true" ondragstart="dragProject(event,'${p.id}')"><b>${esc(p.title)}</b><span class="muted">${esc(p.kind)}</span><div class="kmeta"><span class="tag">${esc(p.note||'')}</span></div><div class="months">${['01','02','03','04','05','06','07','08','09','10','11','12'].map((mm,i)=>`<span class="month ${p.months.includes('2026-'+mm)?'on':''}">${months[i]}</span>`).join('')}</div><div style="display:flex;gap:6px;margin-top:10px"><button class="btn" onclick="editProject('${p.id}')">Изменить</button><button class="btn danger" onclick="deleteItem('project','${p.id}')">×</button></div></div>`).join('')}</div></div>`});document.getElementById('kanbanBoard').innerHTML=board;
+ let all=[...db.projects];let h='<div class="timeline-row"><div class="timeline-label"><b>Проект</b></div><div class="monthline">'+months.map(x=>`<div class="muted" style="font-size:9px;text-align:center">${x}</div>`).join('')+'</div></div>';
+ all.forEach(p=>{let active=p.months.filter(x=>x.startsWith('2026-')).map(x=>+x.slice(5));let min=Math.min(...active),max=Math.max(...active);h+=`<div class="timeline-row"><div class="timeline-label"><b>${esc(p.title)}</b><br><span class="muted">${esc(p.kind)}</span></div><div class="monthline">${active.length?`<div class="bar ${p.color||''}" style="grid-column:${min}/${max+1}" title="${esc(p.title)}"></div>`:''}</div></div>`});document.getElementById('timeline').innerHTML=h;
+}
+let dragged=null;function dragProject(e,id){dragged=id;e.dataTransfer.setData('text/plain',id)}function dropProject(e,status){let id=e.dataTransfer.getData('text/plain')||dragged,p=db.projects.find(x=>x.id===id);if(p){p.status=status;save()}}
+function openModal(type,id=null){
+ modalAction={type,id};let title='',body='';
+ if(type==='subject'){
+   let s=id?db.subjects.find(x=>x.id===id):{};
+   title=id?'Редактировать предмет':'Новый учебный предмет';
+   body=`<div class="fields">
+     <div class="field"><label>Название предмета</label><input id="fTitle" value="${esc(s.name||'')}" placeholder="Например, Международная безопасность"></div>
+     <div class="field"><label>Преподаватель</label><input id="fSubjectTeacher" value="${esc(s.teacher||'')}" placeholder="ФИО преподавателя"></div>
+     <div class="field"><label>Формат</label><select id="fSubjectFormat"><option ${!s.format?'selected':''}>Лекция</option><option ${s.format==='Семинар'?'selected':''}>Семинар</option><option ${s.format==='Практика'?'selected':''}>Практика</option><option ${s.format==='Лекция + семинар'?'selected':''}>Лекция + семинар</option><option ${s.format==='Зачёт/экзамен'?'selected':''}>Зачёт/экзамен</option></select></div>
+     <div class="field"><label>Аудитория</label><input id="fSubjectRoom" value="${esc(s.room||'')}" placeholder="Например, 412"></div>
+     <div class="field"><label>Цвет</label><select id="fColor"><option value="rose" ${s.color==='rose'||!s.color?'selected':''}>Пудровый</option><option value="blue" ${s.color==='blue'?'selected':''}>Голубой</option><option value="green" ${s.color==='green'?'selected':''}>Зелёный</option><option value="lav" ${s.color==='lav'?'selected':''}>Лавандовый</option></select></div>
+   </div>`;
+ }
+ if(type==='task'){let t=id?db.tasks.find(x=>x.id===id):{};title=id?'Редактировать задание':'Новое задание';body=`<div class="fields"><div class="field"><label>Название</label><input id="fTitle" value="${esc(t.title||'')}"></div><div class="field"><label>Предмет</label><select id="fCourse">${subjectOptions(t.course||'')}</select></div><div class="field"><label>Дедлайн</label><input type="date" id="fDate" value="${t.due||iso(new Date())}"></div><div class="field"><label>Приоритет</label><select id="fPriority"><option ${t.priority==='Низкий'?'selected':''}>Низкий</option><option ${t.priority==='Средний'||!t.priority?'selected':''}>Средний</option><option ${t.priority==='Высокий'?'selected':''}>Высокий</option></select></div></div>`}
+ if(type==='event'){let x=id?db.events.find(x=>x.id===id):{};title='Мероприятие';body=`<div class="fields"><div class="field"><label>Название</label><input id="fTitle" value="${esc(x.title||'')}"></div><div class="field"><label>Дата</label><input type="date" id="fDate" value="${x.date||iso(new Date())}"></div><div class="field"><label>Время</label><input type="time" id="fTime" value="${x.time||'12:00'}"></div><div class="field"><label>Место / ссылка</label><input id="fPlace" value="${esc(x.place||'')}"></div><div class="field"><label>Тип</label><input id="fType" value="${esc(x.type||'Мероприятие')}"></div></div>`}
+ if(type==='lesson'){let l=id?db.lessons.find(x=>x.id===id):{};title=id?'Редактировать занятие':'Добавить занятие';body=`<div class="fields"><div class="field"><label>Предмет</label><select id="fCourse">${subjectOptions(l.course||'')}</select></div><div class="field"><label>Тип занятия</label><input id="fTeacher" value="${esc(l.teacher||'')}" placeholder="Лекция / семинар / практика"></div><div class="field"><label>День недели</label><select id="fDay">${days.map((d,i)=>`<option value="${i}" ${Number(l.day)===i?'selected':''}>${d}</option>`).join('')}</select></div><div class="field"><label>Время</label><input type="time" id="fTime" value="${l.time||'10:00'}"></div><div class="field"><label>Аудитория</label><input id="fRoom" value="${esc(l.room||'')}"></div></div>`}
+ if(type==='project'){let p=id?db.projects.find(x=>x.id===id):{};title=id?'Редактировать проект':'Новый проект / стажировка';body=`<div class="fields"><div class="field"><label>Название</label><input id="fTitle" value="${esc(p.title||'')}"></div><div class="field"><label>Тип</label><select id="fKind"><option ${p.kind==='Стажировка'?'selected':''}>Стажировка</option><option ${p.kind==='Проект'||!p.kind?'selected':''}>Проект</option></select></div><div class="field"><label>Описание</label><input id="fNote" value="${esc(p.note||'')}"></div><div class="field"><label>Месяцы 2026 через запятую (например: 01,02,03)</label><input id="fMonths" value="${(p.months||[]).filter(x=>x.startsWith('2026-')).map(x=>x.slice(5)).join(',')}"></div><div class="field"><label>Цвет линии</label><select id="fColor"><option value="rose">Розовый</option><option value="blue">Голубой</option><option value="green">Зелёный</option><option value="lav">Лавандовый</option></select></div></div>`}
+ document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalSave').onclick=saveModal;document.getElementById('modal').classList.add('open');
+}
+function saveModal(){
+ let {type,id}=modalAction;
+ if(type==='subject'){
+   const obj={id:id||uid('s'),name:document.getElementById('fTitle').value.trim(),teacher:document.getElementById('fSubjectTeacher').value.trim(),format:document.getElementById('fSubjectFormat').value,room:document.getElementById('fSubjectRoom').value.trim(),color:document.getElementById('fColor').value};
+   if(!obj.name)return alert('Введите название предмета');
+   const duplicate=db.subjects.some(s=>s.name.toLowerCase()===obj.name.toLowerCase()&&s.id!==obj.id);
+   if(duplicate)return alert('Такой предмет уже есть');
+   if(id)Object.assign(db.subjects.find(x=>x.id===id),obj);else db.subjects.push(obj);
+ }
+ if(type==='task'){let obj={id:id||uid('t'),title:document.getElementById('fTitle').value.trim(),course:document.getElementById('fCourse').value.trim(),due:document.getElementById('fDate').value,priority:document.getElementById('fPriority').value,done:id?db.tasks.find(x=>x.id===id).done:false};if(!obj.title)return alert('Введите название');if(id)Object.assign(db.tasks.find(x=>x.id===id),obj);else db.tasks.push(obj)}
+ if(type==='event'){let obj={id:id||uid('e'),title:document.getElementById('fTitle').value.trim(),date:document.getElementById('fDate').value,time:document.getElementById('fTime').value,place:document.getElementById('fPlace').value,type:document.getElementById('fType').value};if(!obj.title)return alert('Введите название');if(id)Object.assign(db.events.find(x=>x.id===id),obj);else db.events.push(obj)}
+ if(type==='lesson'){
+  const course=document.getElementById('fCourse').value;if(!course)return alert('Сначала выбери предмет.');
+  const s=subjectByName(course)||{};
+  const obj={id:id||uid('l'),course,teacher:document.getElementById('fTeacher').value.trim()||s.teacher||s.format||'',day:+document.getElementById('fDay').value,time:document.getElementById('fTime').value.slice(0,5),room:document.getElementById('fRoom').value.trim()||s.room||''};
+  if(id)Object.assign(db.lessons.find(x=>x.id===id),obj);else db.lessons.push(obj);
+}
+ if(type==='project'){let obj={id:id||uid('p'),title:document.getElementById('fTitle').value.trim(),kind:document.getElementById('fKind').value,note:document.getElementById('fNote').value.trim(),months:document.getElementById('fMonths').value.split(',').map(x=>x.trim()).filter(x=>/^\d{2}$/.test(x)).map(x=>'2026-'+x),color:document.getElementById('fColor').value,status:id?db.projects.find(x=>x.id===id).status:'todo'};if(!obj.title)return alert('Введите название');if(id)Object.assign(db.projects.find(x=>x.id===id),obj);else db.projects.push(obj)}
+ closeModal();save()
+}
+function editProject(id){openModal('project',id)}
+function deleteItem(type,id){if(!confirm('Удалить запись?'))return;if(type==='task')db.tasks=db.tasks.filter(x=>x.id!==id);if(type==='event')db.events=db.events.filter(x=>x.id!==id);if(type==='project')db.projects=db.projects.filter(x=>x.id!==id);if(type==='lesson'){const l=db.lessons.find(x=>x.id===id);db.lessons=db.lessons.filter(x=>x.id!==id);Object.keys(db.attendance).forEach(k=>{if(k.startsWith(id+'|'))delete db.attendance[k]});Object.keys(db.cancelled).forEach(k=>{if(k.startsWith(id+'|'))delete db.cancelled[k]});}save()}
+function closeModal(){document.getElementById('modal').classList.remove('open');modalAction=null}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()})
+function renderAll(){renderSubjects();renderHome();renderSchedule();renderTasks();renderCalendar();renderEventsManager();renderKanban()}
+renderAll();
+</script>
+</body>
+</html>
